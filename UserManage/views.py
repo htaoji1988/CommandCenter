@@ -8,10 +8,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def account(request):
-    print(request.GET.get('username'))
+
     res = {
         "status": "ok"
     }
+
     return JsonResponse(res)
 
 
