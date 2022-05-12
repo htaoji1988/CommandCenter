@@ -1,6 +1,11 @@
 from django.shortcuts import render
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from UserManage.models import User, RoleList
+import json
+import logging
+import datetime
 
 
 # Create your views here.
@@ -12,11 +17,20 @@ def account(request):
     password = request.POST.get('password')
     type = request.POST.get('type')
 
-
     res = {
         "status": 'ok',
         "type": 'account',
         "currentAuthority": 'admin'
+    }
+
+    return JsonResponse(res)
+
+
+@csrf_exempt
+def out_login(request):
+    res = {
+        "data": {},
+        "success": True
     }
 
     return JsonResponse(res)
@@ -79,3 +93,41 @@ def current_user(request):
         }
     }
     return JsonResponse(res)
+
+
+@csrf_exempt
+def list_user(request):
+    logger = logging.getLogger('user_manage')
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    logger.info(body)
+
+    username = body.get('username')
+    nickname = body.get('nickname')
+    role__name = body.get('role__name')
+
+    kwargs = {}
+    if username:
+        kwargs['username__contains'] = username.strip()
+    if nickname:
+        kwargs['nickname__contains'] = nickname.strip()
+    if role__name and role__name != 'all':
+        kwargs['role__name'] = role__name.strip()
+
+    objs = User.objects.filter(**kwargs).values('id', 'username', 'email', 'is_active', 'nickname', 'role__name',
+                                                'last_login')
+
+    res = {'data': list(objs)}
+
+    return JsonResponse(res, encoder=DjangoJSONEncoder)
+
+
+@csrf_exempt
+def roles(request):
+    objs = RoleList.objects.all().values('id', 'name')
+
+    res = {}
+    for o in objs:
+        res[o['name']] = {"text": o['name']}
+
+    return JsonResponse(res, encoder=DjangoJSONEncoder)

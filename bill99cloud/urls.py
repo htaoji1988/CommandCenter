@@ -18,7 +18,9 @@ from django.urls import path, include
 from UserManage import views as user_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', include('UserManage.urls')),
-    path('currentUser', user_view.current_user, name='currentUser'),
+    path('api/admin/', admin.site.urls),
+    path('api/login/account', user_view.account, name='account'),
+    path('api/login/outLogin', user_view.out_login, name='outLogin'),
+    path('api/currentUser', user_view.current_user, name='currentUser'),
+    path('api/user/', include('UserManage.urls')),
 ]

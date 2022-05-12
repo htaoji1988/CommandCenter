@@ -18,5 +18,6 @@ from django.urls import path
 from UserManage import views
 
 urlpatterns = [
-    path('account', views.account, name='account'),
+    path('userinfo', views.list_user, name='userinfo'),
+    path('roles', views.roles, name='roles'),
 ]

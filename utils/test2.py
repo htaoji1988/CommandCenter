@@ -1,21 +1,4 @@
-res = []
-
-
-def dfs(wait, stack, out):
-    if not wait and not stack:
-        res.append(' '.join(map(str, out)))
-    if wait:
-        dfs(wait[1:], stack + [wait[0]], out)
-    if stack:
-        dfs(wait, stack[:-1], out + [stack[-1]])
-
-
-while True:
-    try:
-        n = int(input())
-        trains = list(map(int, input().split()))
-        dfs(trains, [], [])
-        for i in sorted(res):
-            print(i)
-    except:
-        break
+a = {
+    'data': '[{"username": "linjun.zhou", "email": "linjun.zhou@99bill.com", "nickname": "zhoulinjun", "role__name": "appmanage", "last_login": "2018-10-23T06:09:22Z"}, {"username": "yun.ni", "email": "yun.ni@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-10-18T02:38:41Z"}, {"username": "yu.han.poa", "email": "yu.han.poa@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-08-07T08:23:13Z"}, {"username": "pinfei.liu", "email": "pinfei.liu@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-10-23T09:07:25Z"}, {"username": "chen.cheng", "email": "chen.cheng@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-03-12T07:21:09Z"}, {"username": "zhishun.zhou", "email": "zhishun.zhou@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-08-17T08:22:05Z"}, {"username": "zhanhui.cheng", "email": "zhanhui.cheng@99bill.com", "nickname": "chengzhanhui", "role__name": "appmanage", "last_login": "2018-10-24T00:59:34Z"}, {"username": "yu.zhang.rd", "email": "yu.zhang.rd@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-10-24T02:08:52Z"}, {"username": "bingguo.cao", "email": "bingguo.cao@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2017-08-30T09:07:07Z"}, {"username": "vitrum.zhu", "email": "vitrum.zhu@99bill.com", "nickname": "zhuxingang", "role__name": "DBA", "last_login": "2018-02-13T06:18:47Z"}, {"username": "caona", "email": "na.cao.poa@99bill.com", "nickname": null, "role__name": null, "last_login": "2018-07-19T07:03:38Z"}, {"username": "na.cao.poa", "email": "na.cao.poa@99bill.com", "nickname": "caona", "role__name": "appmanage", "last_login": "2017-07-10T01:33:53Z"}, {"username": "chong.wen", "email": "chong.wen@99bill.com", "nickname": "wenchong", "role__name": "appmanage", "last_login": "2017-12-05T08:47:27Z"}, {"username": "chao.guo", "email": "chao.guo@99bill.com", "nickname": "guochao", "role__name": "appmanage", "last_login": "2018-09-07T05:29:16Z"}, {"username": "jie.liu", "email": "jie.liu@99bill.com", "nickname": "liujie", "role__name": "appmanage", "last_login": "2018-10-25T02:21:36Z"}, {"username": "yixin.wang", "email": "yixin.wang@99bill.com", "nickname": "wangyixin", "role__name": "appmanage", "last_login": "2018-11-05T09:08:05Z"}, {"username": "qian.zhao", "email": "qian.zhao@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-01-19T09:03:07Z"}, {"username": "hanjing.liu", "email": "hanjing.liu@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-04-08T01:26:04Z"}, {"username": "hongtao.meng", "email": "hongtao.meng@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-10-12T07:21:53Z"}, {"username": "xin.ba", "email": "xin.ba@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-10-18T07:11:24Z"}, {"username": "xiaowei.zhang", "email": "xiaowei.zhang@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-06-28T03:47:10Z"}, {"username": "yunqiang.yang", "email": "yunqiang.yang@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2017-11-14T01:11:55Z"}, {"username": "yin.jiang", "email": "yin.jiang@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-10-18T08:18:13Z"}, {"username": "shicheng.li", "email": "shicheng.li@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2017-11-15T13:37:38Z"}, {"username": "weiming.lu", "email": "weiming.lu@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-09-23T02:22:54Z"}, {"username": "boyin.cui", "email": "boyin.cui@99bill.com", "nickname": null, "role__name": "DBA", "last_login": "2018-09-27T01:26:52Z"}, {"username": "xu.mingming", "email": "xu.mingming@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-10-19T07:36:04Z"}, {"username": "kailin.zhu", "email": "kailin.zhu@99bill.com", "nickname": null, "role__name": "ucloud", "last_login": "2018-01-18T02:56:28Z"}]',
+    'roles': {1: 'guest', 2: 'appmanage', 3: 'public', 4: 'ucloud', 5: 'dts_s', 6: 'static', 7: 'DBA', 8: 'IDC',
+              9: 'SCM'}}
