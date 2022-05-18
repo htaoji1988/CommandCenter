@@ -105,6 +105,8 @@ def list_user(request):
     username = body.get('username')
     nickname = body.get('nickname')
     role__name = body.get('role__name')
+    is_active = body.get('is_active')
+
 
     kwargs = {}
     if username:
@@ -113,6 +115,10 @@ def list_user(request):
         kwargs['nickname__contains'] = nickname.strip()
     if role__name and role__name != 'all':
         kwargs['role__name'] = role__name.strip()
+    if is_active == 'true':
+        kwargs['is_active'] = True
+    elif is_active == 'false':
+        kwargs['is_active'] = False
 
     objs = User.objects.filter(**kwargs).values('id', 'username', 'email', 'is_active', 'nickname', 'role__name',
                                                 'last_login')
