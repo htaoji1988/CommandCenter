@@ -125,7 +125,7 @@ def list_user(request):
 
     res = {'data': list(objs)}
 
-    return JsonResponse(res, encoder=DjangoJSONEncoder)
+    return JsonResponse(res)
 
 
 @csrf_exempt
@@ -136,4 +136,4 @@ def roles(request):
     for o in objs:
         res[o['name']] = {"text": o['name']}
 
-    return JsonResponse(res, encoder=DjangoJSONEncoder)
+    return JsonResponse(res)
