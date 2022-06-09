@@ -129,6 +129,22 @@ def list_user(request):
 
 
 @csrf_exempt
+def add_user(request):
+    logger = logging.getLogger('user_manage')
+    if request.method == 'POST':
+        logger.info('add user!')
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        logger.info(body)
+
+        res = {}
+
+    res = {}
+
+    return JsonResponse(res)
+
+
+@csrf_exempt
 def roles(request):
     objs = RoleList.objects.all().values('id', 'name')
 

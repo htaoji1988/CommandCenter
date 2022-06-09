@@ -16,7 +16,7 @@ def create_connection(auth_url, region, project_name, username, password, user_d
 
 conn = create_connection(
     auth_url="https://osk.99bill.net:5000/",
-    project_name="test1",
+    project_name="admin",
     username="admin",
     password="xfMQ2I7PoQJeU0lT10cHYuK7pg10VsN3PVK9HzBj",
     region="RegionOne",
@@ -106,9 +106,9 @@ conn = create_connection(
 # print(res.to_dict())
 
 # listeners
-# res = conn.network.listeners()
-# for l in res:
-#     print(l.to_dict())
+res = conn.network.listeners()
+for l in res:
+    print(l.to_dict())
 
 # # 创建listener
 # attrs = {
@@ -136,6 +136,6 @@ conn = create_connection(
 #     print(l.to_dict())
 
 # 自动拓扑
-res = conn.network.get_auto_allocated_topology()
-for t in res:
-    print(t.to_dict())
+# res = conn.network.get_auto_allocated_topology()
+# for t in res:
+#     print(t.to_dict())
