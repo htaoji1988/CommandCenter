@@ -19,6 +19,7 @@ from UserManage import views
 
 urlpatterns = [
     path('userinfo', views.list_user, name='userinfo'),
+    path('del_user', views.del_user, name='del_user'),
     path('adduser', views.add_user, name='adduser'),
     path('roles', views.roles, name='roles'),
 ]

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from UserManage.models import User, RoleList
+from UserManage.models import User, RoleList, UserManager
 import json
 import logging
 import datetime
@@ -115,10 +115,6 @@ def list_user(request):
         kwargs['nickname__contains'] = nickname.strip()
     if role__name and role__name != 'all':
         kwargs['role__name'] = role__name.strip()
-    if is_active == 'true':
-        kwargs['is_active'] = True
-    elif is_active == 'false':
-        kwargs['is_active'] = False
 
     objs = User.objects.filter(**kwargs).values('id', 'username', 'email', 'is_active', 'nickname', 'role__name',
                                                 'last_login')
@@ -132,16 +128,59 @@ def list_user(request):
 def add_user(request):
     logger = logging.getLogger('user_manage')
     if request.method == 'POST':
-        logger.info('add user!')
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        logger.info(body)
+        body = json.loads(request.body.decode('utf-8'))
+        del body['id']
+        logger.info(f'add user!\n{body}')
+        username = body.get('username').strip()
+        email = body.get('mail').strip()
+        password = body.get('password').strip()
+        role_id = RoleList.objects.filter(name=body.get('role')).first().id
+        exsit = User.objects.filter(username=username)
+        if not exsit:
+            try:
+                new_user = User.objects.create(username=username, email=email, role_id=role_id)
+                new_user.set_password(password)
+            except Exception as e:
+                result = {
+                    'success': 'False',
+                    'log': f'{e}'
+                }
+                return JsonResponse(result)
+        else:
+            result = {
+                'success': 'False',
+                'log': "用户已存在!"
+            }
+            return JsonResponse(result)
 
-        res = {}
+    result = {
+        'success': 'True',
+        'log': ''
+    }
 
-    res = {}
+    return JsonResponse(result)
 
-    return JsonResponse(res)
+
+@csrf_exempt
+def del_user(request):
+    logger = logging.getLogger('user_manage')
+    if request.method == 'POST':
+        body = json.loads(request.body.decode('utf-8'))
+        logger.info(f'del user!\n{body}')
+        id = body.get('id')
+        try:
+            User.objects.filter(id=id).delete()
+            result = {
+                'success': 'True',
+                'log': ''
+            }
+        except Exception as e:
+            result = {
+                'success': 'False',
+                'log': e
+            }
+
+        return JsonResponse(result)
 
 
 @csrf_exempt
