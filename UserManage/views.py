@@ -106,8 +106,7 @@ def list_user(request):
     nickname = body.get('nickname')
     role__name = body.get('role__name')
     is_active = body.get('is_active')
-
-
+    print(is_active)
     kwargs = {}
     if username:
         kwargs['username__contains'] = username.strip()
@@ -115,6 +114,10 @@ def list_user(request):
         kwargs['nickname__contains'] = nickname.strip()
     if role__name and role__name != 'all':
         kwargs['role__name'] = role__name.strip()
+    if is_active == "true":
+        kwargs['is_active'] = True
+    elif is_active == "false":
+        kwargs['is_active'] = False
 
     objs = User.objects.filter(**kwargs).values('id', 'username', 'email', 'is_active', 'nickname', 'role__name',
                                                 'last_login')
@@ -134,11 +137,12 @@ def add_user(request):
         username = body.get('username').strip()
         email = body.get('mail').strip()
         password = body.get('password').strip()
+        nickname = body.get('nickname', '').strip()
         role_id = RoleList.objects.filter(name=body.get('role')).first().id
         exsit = User.objects.filter(username=username)
         if not exsit:
             try:
-                new_user = User.objects.create(username=username, email=email, role_id=role_id)
+                new_user = User.objects.create(username=username, email=email, role_id=role_id, nickname=nickname)
                 new_user.set_password(password)
             except Exception as e:
                 result = {
