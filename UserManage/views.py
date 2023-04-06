@@ -106,7 +106,7 @@ def list_user(request):
     nickname = body.get('nickname')
     role__name = body.get('role__name')
     is_active = body.get('is_active')
-    print(is_active)
+
     kwargs = {}
     if username:
         kwargs['username__contains'] = username.strip()
@@ -144,6 +144,7 @@ def add_user(request):
             try:
                 new_user = User.objects.create(username=username, email=email, role_id=role_id, nickname=nickname)
                 new_user.set_password(password)
+                new_user.save()
             except Exception as e:
                 result = {
                     'success': 'False',
