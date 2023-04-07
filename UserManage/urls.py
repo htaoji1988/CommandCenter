@@ -20,13 +20,6 @@ from UserManage import views
 urlpatterns = [
     path('userinfo', views.list_user, name='userinfo'),
     path('del_user', views.del_user, name='del_user'),
-    path('add_user', views.add_user, name='add_user'),
+    path('adduser', views.add_user, name='adduser'),
     path('roles', views.roles, name='roles'),
-    path('role_list', views.role_list, name='role_list'),
-    path('del_role', views.del_role, name='del_role'),
-    path('add_role', views.add_role, name='add_role'),
-    path('permissions', views.permissions, name='permissions'),
-    path('del_permission', views.del_permission, name='del_permission'),
-    path('add_permission', views.add_permission, name='add_permission'),
-    path('update_permission', views.update_permission, name='update_permission'),
 ]

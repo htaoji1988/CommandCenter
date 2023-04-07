@@ -44,7 +44,7 @@ class User(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     nickname = models.CharField(max_length=64, null=True)
     sex = models.CharField(max_length=2, null=True)
-    role = models.ForeignKey(RoleList, null=True, blank=True, default=1, on_delete=models.PROTECT)
+    role = models.ForeignKey(RoleList, null=True, blank=True, default=1, on_delete=models.SET_DEFAULT)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
