@@ -21,6 +21,7 @@ urlpatterns = [
     path('userinfo', views.list_user, name='userinfo'),
     path('del_user', views.del_user, name='del_user'),
     path('add_user', views.add_user, name='add_user'),
+    path('update_user', views.update_user, name='update_user'),
     path('roles', views.roles, name='roles'),
     path('role_list', views.role_list, name='role_list'),
     path('del_role', views.del_role, name='del_role'),

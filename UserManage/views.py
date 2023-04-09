@@ -2,27 +2,51 @@ from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import check_password
+from django.utils import timezone
 from django.db.models import Q
+from rest_framework.authtoken.models import Token
 from UserManage.models import User, RoleList, UserManager, PermissionList
 import json
 import logging
 import datetime
-
 
 # Create your views here.
 
 
 @csrf_exempt
 def account(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    type = request.POST.get('type')
+    logger = logging.getLogger('user_manage')
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    logger.info(f'user login!\n{body}')
+    username = body.get('username')
+    password = body.get('password')
+    user = authenticate(username=username, password=password)
 
-    res = {
-        "status": 'ok',
-        "type": 'account',
-        "currentAuthority": 'admin'
-    }
+    if user.is_authenticated:
+        # 删除原来的token
+        try:
+            old_token = Token.objects.filter(user=user)
+            old_token.delete()
+        except Exception as e:
+            logger.info(f'delete old token failed!!!\n{e}')
+        # 创建新的token并传递给前端
+        token = Token.objects.create(user=user)
+
+        res = {
+            "status": 'ok',
+            "type": 'account',
+            "currentAuthority": 'admin',
+            "token": token.key
+        }
+    else:
+        res = {
+            "status": 'not ok',
+            "type": 'account',
+            "currentAuthority": 'admin'
+        }
 
     return JsonResponse(res)
 
@@ -98,6 +122,7 @@ def current_user(request):
 
 @csrf_exempt
 def list_user(request):
+    print(request.body)
     logger = logging.getLogger('user_manage')
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
@@ -136,7 +161,7 @@ def add_user(request):
         del body['id']
         logger.info(f'add user!\n{body}')
         username = body.get('username').strip()
-        email = body.get('mail').strip()
+        email = body.get('email').strip()
         password = body.get('password').strip()
         nickname = body.get('nickname', '').strip()
         role_id = RoleList.objects.filter(name=body.get('role')).first().id
@@ -187,6 +212,52 @@ def del_user(request):
             }
 
         return JsonResponse(result)
+
+
+@csrf_exempt
+def update_user(request):
+    logger = logging.getLogger('user_manage')
+    if request.method == 'POST':
+        body = json.loads(request.body.decode('utf-8'))
+        logger.info(f'update user!\n{body}')
+        id = body.get('id')
+        username = body.get('username', '').strip()
+        password = body.get('password', '').strip()
+        status = body.get('status')
+        role_id = RoleList.objects.filter(name=body.get('role')).first().id
+        if status == '启用':
+            body['is_active'] = True
+        else:
+            body['is_active'] = False
+
+        del body['status']
+        del body['role']
+
+        exsit = User.objects.exclude(id=id).filter(username=username)
+        if not exsit:
+            try:
+                user = User.objects.filter(id=id).update(**body, role_id=role_id)
+                if password:
+                    user.set_password(password)
+            except Exception as e:
+                result = {
+                    'success': 'False',
+                    'log': f'{e}'
+                }
+                return JsonResponse(result)
+        else:
+            result = {
+                'success': 'False',
+                'log': "更新失败用户名已存在!"
+            }
+            return JsonResponse(result)
+
+    result = {
+        'success': 'True',
+        'log': ''
+    }
+
+    return JsonResponse(result)
 
 
 @csrf_exempt
