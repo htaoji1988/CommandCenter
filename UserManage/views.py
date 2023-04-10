@@ -7,6 +7,8 @@ from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 from django.db.models import Q
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from UserManage.models import User, RoleList, UserManager, PermissionList
 import json
 import logging
@@ -38,14 +40,15 @@ def account(request):
         res = {
             "status": 'ok',
             "type": 'account',
-            "currentAuthority": 'admin',
+            "currentAuthority": username,
             "token": token.key
         }
     else:
         res = {
+            "username": username,
             "status": 'not ok',
             "type": 'account',
-            "currentAuthority": 'admin'
+            "currentAuthority": username
         }
 
     return JsonResponse(res)
@@ -62,6 +65,7 @@ def out_login(request):
 
 
 def current_user(request):
+    token = request.headers.get('Authorization')
     res = {
         "success": True,
         'data': {
