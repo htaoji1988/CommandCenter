@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+import jwt
+import datetime
+from website import settings
 
 # Create your models here.
 class PermissionList(models.Model):
@@ -53,3 +55,18 @@ class User(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         if self.is_active and self.is_superuser:
             return True
+
+    @property
+    def token(self):
+        return self._generate_jwt_token()
+
+    def _generate_jwt_token(self):
+        token = jwt.encode({
+            'exp': datetime.datetime.now() + datetime.timedelta(days=1),
+            'iat': datetime.datetime.now(),
+            'data': {
+                'name': self.username
+            }
+        }, settings.SECRET_KEY, algorithm='HS256')
+
+        return token.encode("utf-8").decode('utf-8')

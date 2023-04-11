@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'UserManage'
+    'UserManage',
+    'cm'
 ]
 
 # 配置token验证机制
@@ -121,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -133,15 +134,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = ((os.path.join(BASE_DIR, 'static')),)
+STATICFILES_DIRS = ((os.path.join(BASE_DIR, 'static')), )
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# 自定义用户表
-AUTH_USER_MODEL = 'UserManage.User'
 
 # 域控登录
 # import ldap
@@ -179,6 +177,10 @@ AUTH_USER_MODEL = 'UserManage.User'
 #     'user':'SEC',
 #     'pwd':'SEC@99bill.com'
 # }
+
+# 自定义用户表
+AUTH_USER_MODEL = 'UserManage.User'
+
 
 # 日志配置
 LOGGING = {
@@ -237,6 +239,25 @@ LOGGING = {
             'backupCount': 0,
             'formatter': 'verbose',
         },
+
+         'cm_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/cm.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 0,
+            'formatter': 'verbose',
+        },
+        'test_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/test.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 0,
+            'formatter': 'verbose',
+        },
+
+
     },
     "loggers": {
         'django': {
@@ -268,5 +289,21 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False
         },
+
+         'cm': {
+            'handlers': ['cm_handler'],
+            'level': 'INFO',
+            'propagate': False
+        },
+
+          'test': {
+            'handlers': ['test_handler'],
+            'level': 'INFO',
+            'propagate': False
+        },
+
+
+
+
     },
 }

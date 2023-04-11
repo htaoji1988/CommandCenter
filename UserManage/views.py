@@ -6,13 +6,16 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 from django.db.models import Q
+import jwt
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from UserManage.models import User, RoleList, UserManager, PermissionList
+from UserManage.check import token_required
 import json
 import logging
 import datetime
+
 
 # Create your views here.
 
@@ -28,27 +31,20 @@ def account(request):
     user = authenticate(username=username, password=password)
 
     if user.is_authenticated:
-        # 删除原来的token
-        try:
-            old_token = Token.objects.filter(user=user)
-            old_token.delete()
-        except Exception as e:
-            logger.info(f'delete old token failed!!!\n{e}')
-        # 创建新的token并传递给前端
-        token = Token.objects.create(user=user)
 
         res = {
             "status": 'ok',
             "type": 'account',
             "currentAuthority": username,
-            "token": token.key
+            "token": user.token,
+            "email": user.email
         }
     else:
         res = {
-            "username": username,
             "status": 'not ok',
             "type": 'account',
-            "currentAuthority": username
+            "currentAuthority": username,
+            "email": user.email
         }
 
     return JsonResponse(res)
@@ -64,12 +60,13 @@ def out_login(request):
     return JsonResponse(res)
 
 
+@csrf_exempt
+@token_required()
 def current_user(request):
-    token = request.headers.get('Authorization')
     res = {
         "success": True,
         'data': {
-            'name': 'Serati Ma',
+            'name': request.user.username,
             'avatar': 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
             'userid': '00000001',
             'email': 'antdesign@alipay.com',
@@ -125,8 +122,8 @@ def current_user(request):
 
 
 @csrf_exempt
+@token_required()
 def list_user(request):
-    print(request.body)
     logger = logging.getLogger('user_manage')
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
