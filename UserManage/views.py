@@ -30,23 +30,25 @@ def account(request):
     password = body.get('password')
     user = authenticate(username=username, password=password)
 
-    if user.is_authenticated:
-
+    if user and user.is_authenticated:
         res = {
             "status": 'ok',
             "type": 'account',
             "currentAuthority": username,
             "token": user.token,
-            "email": user.email
+            "email": user.email,
+            "role": User.objects.get(username=username).role.name.lower()
         }
-    else:
-        res = {
-            "status": 'not ok',
-            "type": 'account',
-            "currentAuthority": username,
-            "email": user.email
-        }
+        return JsonResponse(res)
 
+    res = {
+        "status": 'not ok',
+        "type": 'account',
+        "currentAuthority": username,
+        "token": '',
+        "email": '',
+        "role": ''
+    }
     return JsonResponse(res)
 
 
@@ -67,57 +69,25 @@ def current_user(request):
         "success": True,
         'data': {
             'name': request.user.username,
-            'avatar': 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-            'userid': '00000001',
-            'email': 'antdesign@alipay.com',
-            'signature': '海纳百川，有容乃大',
-            'title': '交互专家',
-            'group': '蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED',
+            'avatar': '/User.png',
+            'userid': request.user.id,
+            'email': request.user.email,
+            'signature': '',
+            'title': '',
+            'group': '',
             'tags': [
-                {
-                    'key': '0',
-                    'label': '很有想法的',
-                },
-                {
-                    'key': '1',
-                    'label': '专注设计',
-                },
-                {
-                    'key': '2',
-                    'label': '辣~',
-                },
-                {
-                    'key': '3',
-                    'label': '大长腿',
-                },
-                {
-                    'key': '4',
-                    'label': '川妹子',
-                },
-                {
-                    'key': '5',
-                    'label': '海纳百川',
-                },
-
             ],
             'notifyCount': 12,
             'unreadCount': 11,
             'country': 'China',
-            'access': 'admin',
+            'access': request.user.role.name,
             'geographic': {
-                'province': {
-                    'label': '浙江省',
-                    'key': '330000',
-                },
-                'city': {
-                    'label': '杭州市',
-                    'key': '330100',
-                },
             },
-            'address': '西湖区工专路 77 号',
-            'phone': '0752-268888888',
+            'address': '',
+            'phone': '',
         }
     }
+
     return JsonResponse(res)
 
 
@@ -233,6 +203,7 @@ def update_user(request):
 
         del body['status']
         del body['role']
+        del body['password']
 
         exsit = User.objects.exclude(id=id).filter(username=username)
         if not exsit:
@@ -273,6 +244,7 @@ def roles(request):
 
 
 @csrf_exempt
+@token_required()
 def role_list(request):
     logger = logging.getLogger('user_manage')
     body_unicode = request.body.decode('utf-8')
@@ -348,6 +320,7 @@ def del_role(request):
 
 
 @csrf_exempt
+@token_required()
 def permissions(request):
     logger = logging.getLogger('user_manage')
     body_unicode = request.body.decode('utf-8')

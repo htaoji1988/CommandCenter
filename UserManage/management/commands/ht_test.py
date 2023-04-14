@@ -23,6 +23,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from UserManage.models import User
 
-        u = User.objects.get(username='jie.liu')
-        print(u.token)
+        u = User.objects.get(username='root')
+        u.set_password('admin')
+        u.save()
 
